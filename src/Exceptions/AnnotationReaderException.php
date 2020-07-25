@@ -5,11 +5,11 @@
  * @author Jack Worman
  */
 
-namespace App\Exceptions;
+namespace JWorman\AnnotationReader\Exceptions;
 
 /**
  * Class AnnotationReaderException
- * @package App\Utilities\AnnotationReader\Exceptions
+ * @package JWorman\AnnotationReader\Utilities\AnnotationReader\Exceptions
  */
 class AnnotationReaderException extends \Exception
 {

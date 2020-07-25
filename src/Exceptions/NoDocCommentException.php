@@ -5,11 +5,11 @@
  * @author Jack Worman
  */
 
-namespace App\Exceptions;
+namespace JWorman\AnnotationReader\Exceptions;
 
 /**
  * Class MissingDocComment
- * @package App\Utilities\AnnotationReader\Exceptions
+ * @package JWorman\AnnotationReader\Utilities\AnnotationReader\Exceptions
  */
 class NoDocCommentException extends AnnotationReaderException
 {

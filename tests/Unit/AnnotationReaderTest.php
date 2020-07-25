@@ -5,12 +5,12 @@
  * @author Jack Worman
  */
 
-namespace App\Tests\Unit;
+namespace JWorman\AnnotationReader\Tests\Unit;
 
-use App\AnnotationReader;
-use App\Exceptions\AnnotationReaderException;
-use App\Tests\Unit\Annotations\Annotation1;
-use App\Tests\Unit\Entities\Entity1;
+use JWorman\AnnotationReader\AnnotationReader;
+use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
+use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\Unit\Entities\Entity1;
 use PHPUnit\Framework\TestCase;
 
 class AnnotationReaderTest extends TestCase
@@ -68,7 +68,8 @@ class AnnotationReaderTest extends TestCase
         $namespaceSubsets = $reflectionMethod->invoke(null, Annotation1::CLASS_NAME);
 
         $expectedNamespaceSubsets = array(
-            'App\Tests\Unit\Annotations\Annotation1',
+            'JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1',
+            'AnnotationReader\Tests\Unit\Annotations\Annotation1',
             'Tests\Unit\Annotations\Annotation1',
             'Unit\Annotations\Annotation1',
             'Annotations\Annotation1',
@@ -82,13 +83,13 @@ class AnnotationReaderTest extends TestCase
      */
     public function testGetImportAliases()
     {
-        $reflectionMethod = new \ReflectionMethod('\App\AnnotationReader', 'getImportAliases');
+        $reflectionMethod = new \ReflectionMethod('\JWorman\AnnotationReader\AnnotationReader', 'getImportAliases');
         $reflectionMethod->setAccessible(true);
         $refactorUseStatements = $reflectionMethod->invoke(null, new \ReflectionClass(Entity1::CLASS_NAME));
 
         $expectedNamespaceSubsets = array(
-            'Annotation1' => 'App\Tests\Unit\Annotations\Annotation1',
-            'Blah' => 'App\Tests\Unit'
+            'Annotation1' => 'JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1',
+            'Blah' => 'JWorman\AnnotationReader\Tests\Unit'
         );
         $this->assertEquals($expectedNamespaceSubsets, $refactorUseStatements);
     }
@@ -101,8 +102,8 @@ class AnnotationReaderTest extends TestCase
         $reflectionMethod = new \ReflectionMethod(AnnotationReader::CLASS_NAME, 'getNamePatterns');
         $reflectionMethod->setAccessible(true);
         $importAliases = array(
-            'Annotation1' => 'App\Tests\Unit\Annotations\Annotation1',
-            'Blah' => 'App\Tests\Unit'
+            'Annotation1' => 'JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1',
+            'Blah' => 'JWorman\AnnotationReader\Tests\Unit'
         );
         $namePatterns = $reflectionMethod->invoke(null, Annotation1::CLASS_NAME, $importAliases);
 

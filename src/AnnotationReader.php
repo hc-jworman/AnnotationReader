@@ -5,16 +5,16 @@
  * @author Jack Worman
  */
 
-namespace App;
+namespace JWorman\AnnotationReader;
 
-use App\Exceptions\AnnotationReaderException;
-use App\Exceptions\AnnotationSyntaxException;
-use App\Exceptions\NoAnnotationException;
-use App\Exceptions\NoDocCommentException;
+use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
+use JWorman\AnnotationReader\Exceptions\AnnotationSyntaxException;
+use JWorman\AnnotationReader\Exceptions\NoAnnotationException;
+use JWorman\AnnotationReader\Exceptions\NoDocCommentException;
 
 /**
  * Class AnnotationReader
- * @package App
+ * @package JWorman\AnnotationReader
  */
 class AnnotationReader
 {

@@ -5,13 +5,13 @@
  * @author Jack Worman
  */
 
-namespace App\Tests\Unit\Annotations;
+namespace JWorman\AnnotationReader\Tests\Unit\Annotations;
 
-use App\AbstractAnnotation;
+use JWorman\AnnotationReader\AbstractAnnotation;
 
 /**
  * Class Annotation1
- * @package App\Tests\Unit\Annotations
+ * @package JWorman\AnnotationReader\Tests\Unit\Annotations
  */
 class Annotation1 extends AbstractAnnotation
 {

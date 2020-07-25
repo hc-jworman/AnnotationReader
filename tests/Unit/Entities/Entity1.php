@@ -5,14 +5,14 @@
  * @author Jack Worman
  */
 
-namespace App\Tests\Unit\Entities;
+namespace JWorman\AnnotationReader\Tests\Unit\Entities;
 
-use App\Tests\Unit\Annotations\Annotation1;
-use App\Tests\Unit as Blah;
+use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\Unit as Blah;
 
 /**
  * Class Entity1
- * @package App\Tests\Unit\Entities
+ * @package JWorman\AnnotationReader\Tests\Unit\Entities
  */
 class Entity1
 {

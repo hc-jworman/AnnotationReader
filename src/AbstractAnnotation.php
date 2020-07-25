@@ -5,11 +5,11 @@
  * @author Jack Worman
  */
 
-namespace App;
+namespace JWorman\AnnotationReader;
 
 /**
  * Class AbstractAnnotation
- * @package App\AnnotationReader
+ * @package JWorman\AnnotationReader\AnnotationReader
  */
 abstract class AbstractAnnotation
 {
