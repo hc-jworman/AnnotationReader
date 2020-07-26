@@ -1,5 +1,5 @@
 {
-    "name": "hc_jworman/annotation-reader",
+    "name": "jworman/annotation-reader",
     "description": "Allows the parsing of annotations within doc comments.",
     "version": "1.0.0",
     "autoload": {
