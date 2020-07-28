@@ -14,16 +14,24 @@ namespace JWorman\AnnotationReader;
 abstract class AbstractAnnotation
 {
     /**
-     * @var string
+     * @var mixed
      */
     protected $value;
 
     /**
      * AbstractAnnotation constructor.
-     * @param $value
+     * @param string $value
      */
     final public function __construct($value)
     {
-        $this->value = $value;
+        $this->value = json_decode($value);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 }

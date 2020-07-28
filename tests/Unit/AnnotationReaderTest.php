@@ -24,24 +24,7 @@ class AnnotationReaderTest extends TestCase
         $reflectionProperty = new \ReflectionProperty(Entity1::CLASS_NAME, 'property1');
         /** @var Annotation1 $annotation1 */
         $annotation1 = AnnotationReader::getPropertyAnnotation($reflectionProperty, Annotation1::CLASS_NAME);
-
         $this->assertEquals('fizzbuzz', $annotation1->getValue());
-    }
-
-    /**
-     * @covers AnnotationReader::getStartPositionOfAnnotation
-     * @dataProvider provideForTestGetStartPositionOfAnnotation
-     * @param string $docComment
-     * @param string[] $namePatterns
-     * @param int|false $expectedStartPosition
-     */
-    public function testGetStartPositionOfAnnotation($docComment, $namePatterns, $expectedStartPosition)
-    {
-        $reflectionMethod = new \ReflectionMethod(AnnotationReader::CLASS_NAME, 'getStartPositionOfAnnotation');
-        $reflectionMethod->setAccessible(true);
-        $startPosition = $reflectionMethod->invoke(null, $docComment, $namePatterns);
-
-        $this->assertEquals($expectedStartPosition, $startPosition);
     }
 
     /**
@@ -56,26 +39,6 @@ class AnnotationReaderTest extends TestCase
             array($docComment, array('DoesNotExist'), false),
             array($docComment, array('Annotation1'), 25),
         );
-    }
-
-    /**
-     * @covers AnnotationReader::getNamespaceSubsets
-     */
-    public function testGetNamespaceSubsets()
-    {
-        $reflectionMethod = new \ReflectionMethod(AnnotationReader::CLASS_NAME, 'getNamespaceSubsets');
-        $reflectionMethod->setAccessible(true);
-        $namespaceSubsets = $reflectionMethod->invoke(null, Annotation1::CLASS_NAME);
-
-        $expectedNamespaceSubsets = array(
-            'JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1',
-            'AnnotationReader\Tests\Unit\Annotations\Annotation1',
-            'Tests\Unit\Annotations\Annotation1',
-            'Unit\Annotations\Annotation1',
-            'Annotations\Annotation1',
-            'Annotation1'
-        );
-        $this->assertEquals($expectedNamespaceSubsets, $namespaceSubsets);
     }
 
     /**
@@ -95,22 +58,30 @@ class AnnotationReaderTest extends TestCase
     }
 
     /**
-     * @covers AnnotationReader::getNamePatterns
+     * https://regex101.com/r/tW6pI4/1
+     *
+     * @dataProvider provideForTestAnnotationRegex
+     * @param string[] $expectedNames
+     * @param string[] $expectedValues
      */
-    public function testGetNamePatterns()
+    public function testAnnotationRegex($expectedNames, $expectedValues)
     {
-        $reflectionMethod = new \ReflectionMethod(AnnotationReader::CLASS_NAME, 'getNamePatterns');
-        $reflectionMethod->setAccessible(true);
-        $importAliases = array(
-            'Annotation1' => 'JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1',
-            'Blah' => 'JWorman\AnnotationReader\Tests\Unit'
-        );
-        $namePatterns = $reflectionMethod->invoke(null, Annotation1::CLASS_NAME, $importAliases);
+        $reflectionProperty = new \ReflectionProperty(Entity1::CLASS_NAME, 'property2');
+        preg_match_all('/@([\\\\\w]+)\((?:|(.*?[]"}]))\)/', $reflectionProperty->getDocComment(), $matches);
+        $this->assertEquals($expectedNames, $matches[1]);
+        $this->assertEquals($expectedValues, $matches[2]);
+    }
 
-        $expectedNamePatterns = array(
-            'Annotation1',
-            'Blah\Annotations\Annotation1'
+    /**
+     * @return \string[][][]
+     */
+    public function provideForTestAnnotationRegex()
+    {
+        return array(
+            array(
+                array('Ann1', 'Ann2', 'Ann3', 'Ann4', 'Ann5', 'Ann6', 'Ann7', 'Ann8', 'Ann9', 'Ann10\Name', 'Ann11', 'Ann12\Filter\Name', 'Ann13'),
+                array('', '"var1"', '"var1"', '"var1"', '"var1"', '"var1"', '"var1"', '"name@name.com"', '"name()"', '"var1", "var2"', '["var1", "var2"], "var3"', '["var1", "var2"], "var3", {"var4": "var5"}', '"name() ", "aaa"')
+            )
         );
-        $this->assertEquals($expectedNamePatterns, $namePatterns);
     }
 }

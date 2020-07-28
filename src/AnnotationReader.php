@@ -8,9 +8,6 @@
 namespace JWorman\AnnotationReader;
 
 use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
-use JWorman\AnnotationReader\Exceptions\AnnotationSyntaxException;
-use JWorman\AnnotationReader\Exceptions\NoAnnotationException;
-use JWorman\AnnotationReader\Exceptions\NoDocCommentException;
 
 /**
  * Class AnnotationReader
@@ -19,78 +16,67 @@ use JWorman\AnnotationReader\Exceptions\NoDocCommentException;
 class AnnotationReader
 {
     const CLASS_NAME = __CLASS__;
-    /* private */const ANNOTATION_START_PATTERN = '* @%s("';
-    /* private */const ANNOTATION_END_PATTERN = '")';
+
+    /**
+     * @param \ReflectionClass $class
+     * @param bool $useCache
+     * @return array
+     */
+    public static function getClassMetaData(\ReflectionClass $class, $useCache = true)
+    {
+        $fileName = __DIR__ . '/Cache/' . str_replace('\\', '-', $class->getName()) . '.php';
+        if ($useCache && file_exists($fileName)) {
+            return json_decode(include $fileName, true);
+        }
+
+        $importAliases = self::getImportAliases($class);
+        $propertyAnnotations = array();
+        foreach ($class->getProperties() as $reflectionProperty) {
+            $docComment = $reflectionProperty->getDocComment();
+            if ($docComment === false) {
+                $propertyAnnotations[$reflectionProperty->getName()] = array();
+                continue;
+            }
+            preg_match_all('/@([\\\\\w]+)\((?:|(.*?[]"}]))\)/', $reflectionProperty->getDocComment(), $matches);
+            $names = $matches[1];
+            foreach ($names as &$name) {
+                $nameParts = explode('\\', $name);
+                if (isset($importAliases[$nameParts[0]])) {
+                    $nameParts[0] = $importAliases[$nameParts[0]];
+                }
+                $name = implode('\\', $nameParts);
+            }
+            $values = $matches[2];
+
+            $propertyAnnotations[$reflectionProperty->getName()] = array_combine($names, $values);
+        }
+        $metaData = str_replace('\\\\', '\\\\\\', json_encode($propertyAnnotations));
+        $metaData = str_replace('\'', '\\\'', $metaData);
+        file_put_contents($fileName, "<?php\nreturn '" . $metaData . "';\n");
+        return $propertyAnnotations;
+    }
 
     /**
      * @param \ReflectionProperty $reflectionProperty
      * @param string $annotationName
      * @return string
-     * @throws AnnotationReaderException
+     * @throws \Exception
      */
-    public static function getPropertyAnnotation($reflectionProperty, $annotationName)
+    public static function getPropertyAnnotation(\ReflectionProperty $reflectionProperty, $annotationName)
     {
-        $docComment = $reflectionProperty->getDocComment();
-        if ($docComment === false) {
-            throw new NoDocCommentException($reflectionProperty);
+        $classMetaData = self::getClassMetaData($reflectionProperty->getDeclaringClass());
+        $annotations = $classMetaData[$reflectionProperty->getName()];
+        if (isset($annotations[$annotationName])) {
+            return new $annotationName($annotations[$annotationName]);
         }
-
-        $importAliases = self::getImportAliases($reflectionProperty->getDeclaringClass());
-        $namePatterns = self::getNamePatterns($annotationName, $importAliases);
-
-        $start = self::getStartPositionOfAnnotation($docComment, $namePatterns);
-        if ($start === false) {
-            throw new NoAnnotationException($reflectionProperty, $annotationName);
-        }
-
-        $end = strpos($docComment, self::ANNOTATION_END_PATTERN, $start);
-        if ($end === false) {
-            throw new AnnotationSyntaxException($reflectionProperty, $annotationName);
-        }
-
-        $value = substr($docComment, $start, $end - $start);
-        return new $annotationName($value);
-    }
-
-    /**
-     * Gets the starting position of the annotation within the doc comment.
-     *
-     * @param string $docComment
-     * @param string[] $namePatterns
-     * @return false|int
-     */
-    private static function getStartPositionOfAnnotation($docComment, $namePatterns)
-    {
-        foreach ($namePatterns as $namePattern) {
-            $start = false;
-            $matcher = '';
-            foreach (self::getNamespaceSubsets($namePattern) as $namespaceSubset) {
-                $matcher = sprintf(self::ANNOTATION_START_PATTERN, $namespaceSubset);
-                $start = strpos($docComment, $matcher);
-                if ($start !== false) {
-                    break;
-                }
-            }
-            if ($start === false) {
-                continue;
-            }
-            return $start + strlen($matcher);
-        }
-        return false;
-    }
-
-    /**
-     * @param string $fullyQualifiedName
-     * @return string[]
-     */
-    private static function getNamespaceSubsets($fullyQualifiedName)
-    {
-        $fullyQualifiedNameParts = explode('\\', $fullyQualifiedName);
-        $namespaceSubsets = array();
-        for ($i = 0; $i < count($fullyQualifiedNameParts); $i++) {
-            $namespaceSubsets[] = implode('\\', array_slice($fullyQualifiedNameParts, $i));
-        }
-        return $namespaceSubsets;
+        throw new AnnotationReaderException(
+            sprintf(
+                'Annotation "%s" does not exist on property "%s" in class "%s" has invalid syntax.',
+                $annotationName,
+                $reflectionProperty->getName(),
+                $reflectionProperty->getDeclaringClass()->getNamespaceName()
+            )
+        );
     }
 
     /**
@@ -147,35 +133,5 @@ class AnnotationReader
         }
 
         return $useStatements;
-    }
-
-    /**
-     * Calculates all the potential patterns a class can be expressed as, given import aliases.
-     *
-     * @param string $annotationName
-     * @param string[] $importAliases
-     * @return string[]
-     */
-    private static function getNamePatterns($annotationName, $importAliases)
-    {
-        $namePatterns = array();
-        $annotationNamespaceParts = explode('\\', $annotationName);
-        foreach ($importAliases as $alias => $namespace) {
-            $matchesAnnotation = true;
-            $namespaceParts = explode('\\', $namespace);
-            for ($i = 0; $i < count($namespaceParts); $i++) {
-                if ($namespaceParts[$i] !== $annotationNamespaceParts[$i]) {
-                    $matchesAnnotation = false;
-                    break;
-                }
-            }
-            if ($matchesAnnotation) {
-                for (; $i < count($annotationNamespaceParts); $i++) {
-                    $alias .= '\\' . $annotationNamespaceParts[$i];
-                }
-                $namePatterns[] = $alias;
-            }
-        }
-        return $namePatterns;
     }
 }

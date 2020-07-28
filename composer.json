@@ -10,7 +10,9 @@
             "JWorman\\AnnotationReader\\Tests\\": "tests/"
         }
     },
-    "require": {},
+    "require": {
+        "ext-json": "*"
+    },
     "require-dev": {
         "phpunit/phpunit": "^7.5"
     },

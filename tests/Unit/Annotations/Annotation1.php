@@ -16,12 +16,4 @@ use JWorman\AnnotationReader\AbstractAnnotation;
 class Annotation1 extends AbstractAnnotation
 {
     const CLASS_NAME = __CLASS__;
-
-    /**
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
 }
