@@ -1,7 +1,6 @@
 {
     "name": "jworman/annotation-reader",
     "description": "Allows the parsing of annotations within doc comments.",
-    "version": "1.0.0",
     "autoload": {
         "psr-4": { "JWorman\\AnnotationReader\\": "src/" }
     },
