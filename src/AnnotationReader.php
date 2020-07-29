@@ -25,7 +25,7 @@ class AnnotationReader
      * @param bool $useCache
      * @return array
      */
-    public static function getClassMetaData(\ReflectionClass $class, $useCache = false)
+    public static function getClassMetaData(\ReflectionClass $class, $useCache = true)
     {
         $fileName = __DIR__ . '/Cache/' . str_replace('\\', '-', $class->getName()) . '.json';
         if ($useCache && file_exists($fileName)) {
