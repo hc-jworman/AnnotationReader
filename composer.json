@@ -1,8 +1,11 @@
 {
     "name": "jworman/annotation-reader",
     "description": "Allows the parsing of annotations within doc comments.",
+    "license": "MIT",
     "autoload": {
-        "psr-4": { "JWorman\\AnnotationReader\\": "src/" }
+        "psr-4": {
+            "JWorman\\AnnotationReader\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
