@@ -16,27 +16,20 @@ use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
 class AnnotationReader
 {
     const CLASS_NAME = __CLASS__;
-    const TIME_TO_LIVE = 15;
-    const META_DATA_TIME_ADDED = 'time-added';
-    const META_DATA_PROPERTY_ANNOTATIONS = 'property-annotations';
+
+    /**
+     * @var array
+     */
+    private static $cache = array();
 
     /**
      * @param \ReflectionClass $class
-     * @param bool $useCache
      * @return array
-     * @throws AnnotationReaderException
      */
-    public static function getClassMetaData(\ReflectionClass $class, $useCache = true)
+    public static function getClassMetaData(\ReflectionClass $class)
     {
-        $fileName = __DIR__ . '/__cache__/' . str_replace('\\', '-', $class->getName()) . '.json';
-        if ($useCache && file_exists($fileName)) {
-            $metaData = json_decode(file_get_contents($fileName), true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new \LogicException('Invalid JSON in cache.');
-            }
-            if (time() - $metaData[self::META_DATA_TIME_ADDED] <= self::TIME_TO_LIVE) {
-                return $metaData[self::META_DATA_PROPERTY_ANNOTATIONS];
-            }
+        if (isset(self::$cache[$class->getName()])) {
+            return self::$cache[$class->getName()];
         }
 
         $importAliases = self::getImportAliases($class);
@@ -61,17 +54,7 @@ class AnnotationReader
             $propertyAnnotations[$reflectionProperty->getName()] = array_combine($names, $values);
         }
 
-        $metaData = array(
-            self::META_DATA_TIME_ADDED => time(),
-            self::META_DATA_PROPERTY_ANNOTATIONS => $propertyAnnotations
-        );
-        $data = json_encode($metaData);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new AnnotationReaderException(
-                sprintf('Could not JSON encode annotation data from in "%s".', $class->getName())
-            );
-        }
-        file_put_contents($fileName, $data);
+        self::$cache[$class->getName()] = $propertyAnnotations;
         return $propertyAnnotations;
     }
 

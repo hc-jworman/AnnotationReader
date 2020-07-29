@@ -9,7 +9,6 @@ namespace JWorman\AnnotationReader\Tests\Unit;
 
 use JWorman\AnnotationReader\AnnotationReader;
 use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
-use JWorman\AnnotationReader\PropertyAnnotationFactory;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
 use JWorman\AnnotationReader\Tests\Unit\Entities\Entity1;
 use PHPUnit\Framework\TestCase;
@@ -112,14 +111,5 @@ class AnnotationReaderTest extends TestCase
                 )
             )
         );
-    }
-
-    /**
-     */
-    public function testAnnotationRegex2()
-    {
-        $factory = new PropertyAnnotationFactory(new \ReflectionClass(Entity1::CLASS_NAME));
-        $blah = $factory->getAnnotation('property1', Annotation1::CLASS_NAME);
-        var_dump($blah);
     }
 }
