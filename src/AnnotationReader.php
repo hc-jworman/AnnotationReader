@@ -24,12 +24,16 @@ class AnnotationReader
      * @param \ReflectionClass $class
      * @param bool $useCache
      * @return array
+     * @throws AnnotationReaderException
      */
     public static function getClassMetaData(\ReflectionClass $class, $useCache = true)
     {
-        $fileName = __DIR__ . '/Cache/' . str_replace('\\', '-', $class->getName()) . '.json';
+        $fileName = __DIR__ . '/__cache__/' . str_replace('\\', '-', $class->getName()) . '.json';
         if ($useCache && file_exists($fileName)) {
             $metaData = json_decode(file_get_contents($fileName), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \LogicException('Invalid JSON in cache.');
+            }
             if (time() - $metaData[self::META_DATA_TIME_ADDED] <= self::TIME_TO_LIVE) {
                 return $metaData[self::META_DATA_PROPERTY_ANNOTATIONS];
             }
@@ -61,7 +65,16 @@ class AnnotationReader
             self::META_DATA_TIME_ADDED => time(),
             self::META_DATA_PROPERTY_ANNOTATIONS => $propertyAnnotations
         );
-        file_put_contents($fileName, json_encode($metaData));
+        $data = json_encode($metaData);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new AnnotationReaderException(
+                sprintf(
+                    'Could not JSON encode annotation data from in "%s".',
+                    $reflectionProperty->getDeclaringClass()->getName()
+                )
+            );
+        }
+        file_put_contents($fileName, $data);
         return $propertyAnnotations;
     }
 
