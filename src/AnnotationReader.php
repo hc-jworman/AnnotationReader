@@ -16,17 +16,23 @@ use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
 class AnnotationReader
 {
     const CLASS_NAME = __CLASS__;
+    const TIME_TO_LIVE = 15;
+    const META_DATA_TIME_ADDED = 'time-added';
+    const META_DATA_PROPERTY_ANNOTATIONS = 'property-annotations';
 
     /**
      * @param \ReflectionClass $class
      * @param bool $useCache
      * @return array
      */
-    public static function getClassMetaData(\ReflectionClass $class, $useCache = true)
+    public static function getClassMetaData(\ReflectionClass $class, $useCache = false)
     {
-        $fileName = __DIR__ . '/Cache/' . str_replace('\\', '-', $class->getName()) . '.php';
+        $fileName = __DIR__ . '/Cache/' . str_replace('\\', '-', $class->getName()) . '.json';
         if ($useCache && file_exists($fileName)) {
-            return json_decode(include $fileName, true);
+            $metaData = json_decode(file_get_contents($fileName), true);
+            if (time() - $metaData[self::META_DATA_TIME_ADDED] <= self::TIME_TO_LIVE) {
+                return $metaData[self::META_DATA_PROPERTY_ANNOTATIONS];
+            }
         }
 
         $importAliases = self::getImportAliases($class);
@@ -50,9 +56,12 @@ class AnnotationReader
 
             $propertyAnnotations[$reflectionProperty->getName()] = array_combine($names, $values);
         }
-        $metaData = str_replace('\\\\', '\\\\\\', json_encode($propertyAnnotations));
-        $metaData = str_replace('\'', '\\\'', $metaData);
-        file_put_contents($fileName, "<?php\nreturn '" . $metaData . "';\n");
+
+        $metaData = array(
+            self::META_DATA_TIME_ADDED => time(),
+            self::META_DATA_PROPERTY_ANNOTATIONS => $propertyAnnotations
+        );
+        file_put_contents($fileName, json_encode($metaData));
         return $propertyAnnotations;
     }
 
@@ -60,7 +69,7 @@ class AnnotationReader
      * @param \ReflectionProperty $reflectionProperty
      * @param string $annotationName
      * @return string
-     * @throws \Exception
+     * @throws AnnotationReaderException
      */
     public static function getPropertyAnnotation(\ReflectionProperty $reflectionProperty, $annotationName)
     {
@@ -71,7 +80,7 @@ class AnnotationReader
         }
         throw new AnnotationReaderException(
             sprintf(
-                'Annotation "%s" does not exist on property "%s" in class "%s" has invalid syntax.',
+                'Annotation "%s" does not exist on property "%s" in class "%s".',
                 $annotationName,
                 $reflectionProperty->getName(),
                 $reflectionProperty->getDeclaringClass()->getNamespaceName()
