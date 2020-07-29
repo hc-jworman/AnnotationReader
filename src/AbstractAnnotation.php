@@ -31,6 +31,9 @@ abstract class AbstractAnnotation
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new AnnotationReaderException('Invalid JSON in annotation.');
         }
+        if (!$this->validateValue()) {
+            throw new AnnotationReaderException('Annotation has invalid value.');
+        }
     }
 
     /**
@@ -39,5 +42,13 @@ abstract class AbstractAnnotation
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function validateValue()
+    {
+        return true;
     }
 }

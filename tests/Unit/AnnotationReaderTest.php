@@ -9,6 +9,7 @@ namespace JWorman\AnnotationReader\Tests\Unit;
 
 use JWorman\AnnotationReader\AnnotationReader;
 use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
+use JWorman\AnnotationReader\PropertyAnnotationFactory;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
 use JWorman\AnnotationReader\Tests\Unit\Entities\Entity1;
 use PHPUnit\Framework\TestCase;
@@ -79,9 +80,46 @@ class AnnotationReaderTest extends TestCase
     {
         return array(
             array(
-                array('Ann1', 'Ann2', 'Ann3', 'Ann4', 'Ann5', 'Ann6', 'Ann7', 'Ann8', 'Ann9', 'Ann10\Name', 'Ann11', 'Ann12\Filter\Name', 'Ann13'),
-                array('', '"var1"', '"var1"', '"var1"', '"var1"', '"var1"', '"var1"', '"name@name.com"', '"name()"', '"var1", "var2"', '["var1", "var2"], "var3"', '["var1", "var2"], "var3", {"var4": "var5"}', '"name() ", "aaa"')
+                array(
+                    'Ann1',
+                    'Ann2',
+                    'Ann3',
+                    'Ann4',
+                    'Ann5',
+                    'Ann6',
+                    'Ann7',
+                    'Ann8',
+                    'Ann9',
+                    'Ann10\Name',
+                    'Ann11',
+                    'Ann12\Filter\Name',
+                    'Ann13'
+                ),
+                array(
+                    '',
+                    '"var1"',
+                    '"var1"',
+                    '"var1"',
+                    '"var1"',
+                    '"var1"',
+                    '"var1"',
+                    '"name@name.com"',
+                    '"name()"',
+                    '"var1", "var2"',
+                    '["var1", "var2"], "var3"',
+                    '["var1", "var2"], "var3", {"var4": "var5"}',
+                    '"name() ", "aaa"'
+                )
             )
         );
+    }
+
+    /**
+     */
+    public function testAnnotationRegex2()
+    {
+        $factory = new PropertyAnnotationFactory(new \ReflectionClass(Entity1::CLASS_NAME));
+        $blah = $factory->getAnnotation('property1', Annotation1::CLASS_NAME);
+        var_dump($blah);
     }
 }
