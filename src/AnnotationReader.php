@@ -70,7 +70,7 @@ class AnnotationReader
             throw new AnnotationReaderException(
                 sprintf(
                     'Could not JSON encode annotation data from in "%s".',
-                    $reflectionProperty->getDeclaringClass()->getName()
+                    $class->getName()
                 )
             );
         }
