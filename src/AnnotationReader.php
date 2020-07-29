@@ -68,10 +68,7 @@ class AnnotationReader
         $data = json_encode($metaData);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new AnnotationReaderException(
-                sprintf(
-                    'Could not JSON encode annotation data from in "%s".',
-                    $class->getName()
-                )
+                sprintf('Could not JSON encode annotation data from in "%s".', $class->getName())
             );
         }
         file_put_contents($fileName, $data);
