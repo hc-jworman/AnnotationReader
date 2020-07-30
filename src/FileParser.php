@@ -54,8 +54,11 @@ class FileParser
             if (isset($classImports[$nameParts[0]])) {
                 // Has an import statement:
                 $nameParts[0] = $classImports[$nameParts[0]];
+            } elseif (class_exists($name)) {
+                // Is a FQN
+                continue;
             } else {
-                // Either invalid or in the same namespace:
+                // In the same namespace or invalid:
                 $nameParts[0] = $classNamespace . '\\' . $nameParts[0];
             }
             $name = implode('\\', $nameParts);
@@ -65,9 +68,8 @@ class FileParser
     }
 
     /**
-     * @return string[] Alias => FQN
      * @todo Does not support combined use statements.
-     *
+     * @return string[] Alias => FQN
      */
     private function getClassImports()
     {

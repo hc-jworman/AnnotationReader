@@ -15,6 +15,8 @@ use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
  */
 abstract class AbstractAnnotation
 {
+    const CLASS_NAME = __CLASS__;
+
     /**
      * @var mixed
      */
