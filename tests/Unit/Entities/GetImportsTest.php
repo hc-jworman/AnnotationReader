@@ -8,7 +8,7 @@
 namespace JWorman\AnnotationReader\Tests\Unit\Entities;
 
 use A\Fully\Qualified\Name;
-use At\The\Bottom;
+use Has\An\Alias as ThisIsAnAlias;
 
 trait ThisIsATrait
 {
@@ -24,3 +24,5 @@ class GetImportsTest
 
     const CLASS_NAME = __CLASS__;
 }
+
+use At\The\Bottom;
