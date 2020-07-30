@@ -13,4 +13,5 @@ namespace JWorman\AnnotationReader\Exceptions;
  */
 class AnnotationReaderException extends \Exception
 {
+    const CLASS_NAME = __CLASS__;
 }
