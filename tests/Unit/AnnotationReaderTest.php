@@ -8,7 +8,6 @@
 namespace JWorman\AnnotationReader\Tests\Unit;
 
 use JWorman\AnnotationReader\AnnotationReader;
-use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
 use JWorman\AnnotationReader\Tests\Unit\Entities\Entity1;
 use PHPUnit\Framework\TestCase;
@@ -16,49 +15,30 @@ use PHPUnit\Framework\TestCase;
 class AnnotationReaderTest extends TestCase
 {
     /**
-     * @covers AnnotationReader::getPropertyAnnotation
-     * @throws AnnotationReaderException
+     * @covers \JWorman\AnnotationReader\AnnotationReader::getPropertyAnnotation
      */
     public function testGetPropertyAnnotation()
     {
         $reflectionProperty = new \ReflectionProperty(Entity1::CLASS_NAME, 'property1');
+        $annotationReader = new AnnotationReader();
+
+        $start = microtime(true);
         /** @var Annotation1 $annotation1 */
-        $annotation1 = AnnotationReader::getPropertyAnnotation($reflectionProperty, Annotation1::CLASS_NAME);
+        $annotation1 = $annotationReader->getPropertyAnnotation($reflectionProperty, Annotation1::CLASS_NAME);
+        $withoutCache = microtime(true) - $start;
         $this->assertEquals('fizzbuzz', $annotation1->getValue());
+
+        // Using cache:
+        $start = microtime(true);
+        $annotation1 = $annotationReader->getPropertyAnnotation($reflectionProperty, Annotation1::CLASS_NAME);
+        $withCache = microtime(true) - $start;
+        $this->assertEquals('fizzbuzz', $annotation1->getValue());
+
+        $this->assertTrue($withCache < $withoutCache);
     }
 
     /**
-     * @return array[]
-     */
-    public function provideForTestGetStartPositionOfAnnotation()
-    {
-        $reflectionProperty = new \ReflectionProperty(Entity1::CLASS_NAME, 'property1');
-        $docComment = $reflectionProperty->getDocComment();
-
-        return array(
-            array($docComment, array('DoesNotExist'), false),
-            array($docComment, array('Annotation1'), 25),
-        );
-    }
-
-    /**
-     * @covers AnnotationReader::getImportAliases
-     */
-    public function testGetImportAliases()
-    {
-        $reflectionMethod = new \ReflectionMethod('\JWorman\AnnotationReader\AnnotationReader', 'getImportAliases');
-        $reflectionMethod->setAccessible(true);
-        $refactorUseStatements = $reflectionMethod->invoke(null, new \ReflectionClass(Entity1::CLASS_NAME));
-
-        $expectedNamespaceSubsets = array(
-            'Annotation1' => 'JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1',
-            'Blah' => 'JWorman\AnnotationReader\Tests\Unit'
-        );
-        $this->assertEquals($expectedNamespaceSubsets, $refactorUseStatements);
-    }
-
-    /**
-     * https://regex101.com/r/tW6pI4/1
+     *
      *
      * @dataProvider provideForTestAnnotationRegex
      * @param string[] $expectedNames
