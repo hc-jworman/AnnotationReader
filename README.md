@@ -31,3 +31,10 @@ $reflectionProperty = new \ReflectionProperty('Example', 'id');
 $annotation = $annotationReader->getPropertyAnnotation($reflectionProperty, 'MyAnnotation');
 $value = $annotation->getValue(); // Returns "fizzbuzz"
 ```
+Annotations can have any JSON value inside them.
+```php
+/**
+  * @MyAnnotation("fizzbuzz")
+  * @AnotherOne({"isCool": true, "list": [null, false, {"nested": "object"}]})
+  */
+```

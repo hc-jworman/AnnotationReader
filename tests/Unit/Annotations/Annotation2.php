@@ -16,4 +16,12 @@ use JWorman\AnnotationReader\AbstractAnnotation;
 class Annotation2 extends AbstractAnnotation
 {
     const CLASS_NAME = __CLASS__;
+
+    /**
+     * @inheritDoc
+     */
+    public function validateValue()
+    {
+        return true;
+    }
 }

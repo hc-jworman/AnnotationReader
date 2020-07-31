@@ -7,8 +7,6 @@
 
 namespace JWorman\AnnotationReader;
 
-use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
-
 /**
  * Class AbstractAnnotation
  * @package JWorman\AnnotationReader\AnnotationReader
@@ -25,23 +23,22 @@ abstract class AbstractAnnotation
     /**
      * AbstractAnnotation constructor.
      * @param string $value
-     * @throws AnnotationReaderException
      */
     final public function __construct($value)
     {
         $this->value = json_decode($value);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new AnnotationReaderException('Invalid JSON in annotation.');
+            throw new \InvalidArgumentException("Invalid JSON in annotation: $value");
         }
         if (!$this->validateValue()) {
-            throw new AnnotationReaderException('Annotation has invalid value.');
+            throw new \InvalidArgumentException('Annotation has invalid value.');
         }
     }
 
     /**
      * @return mixed
      */
-    public function getValue()
+    final public function getValue()
     {
         return $this->value;
     }
@@ -49,8 +46,5 @@ abstract class AbstractAnnotation
     /**
      * @return bool
      */
-    protected function validateValue()
-    {
-        return true;
-    }
+    abstract public function validateValue();
 }

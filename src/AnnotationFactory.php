@@ -37,6 +37,7 @@ class AnnotationFactory
     public static function create($annotationName, $jsonValue)
     {
         if (class_exists($annotationName)) {
+            // TODO: Catch new statement invalid argument exception and give better debugging message.
             $annotation = new $annotationName($jsonValue);
             if ($annotation instanceof AbstractAnnotation) {
                 return $annotation;

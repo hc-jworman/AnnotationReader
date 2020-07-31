@@ -5,28 +5,26 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit;
+namespace JWorman\AnnotationReader\Tests\AbstractAnnotation;
 
 use JWorman\AnnotationReader\AbstractAnnotation;
-use JWorman\AnnotationReader\Exceptions\AnnotationReaderException;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class AbstractAnnotationTest
- * @package JWorman\AnnotationReader\Tests\Unit
+ * @package JWorman\AnnotationReader\Tests\AbstractAnnotation
  */
 class AbstractAnnotationTest extends TestCase
 {
     /**
-     * @covers \JWorman\AnnotationReader\AbstractAnnotation::__construct
+     * @covers       \JWorman\AnnotationReader\AbstractAnnotation::__construct
      * @dataProvider provideDataForTestConstruct
+     * @param string $jsonValue
+     * @param mixed $expectedValue
      */
     public function testConstruct($jsonValue, $expectedValue)
     {
-//        if ($expectException) {
-//            $this->expectException(AnnotationReaderException::CLASS_NAME);
-//        }
         $abstractAnnotation = new Annotation1($jsonValue);
 
         $this->assertEquals($expectedValue, $abstractAnnotation->getValue());
@@ -52,12 +50,13 @@ class AbstractAnnotationTest extends TestCase
     }
 
     /**
-     * @covers \JWorman\AnnotationReader\AbstractAnnotation::__construct
+     * @covers       \JWorman\AnnotationReader\AbstractAnnotation::__construct
      * @dataProvider provideDataForTestConstructException
+     * @param $jsonValue
      */
     public function testConstructException($jsonValue)
     {
-        $this->expectException(AnnotationReaderException::CLASS_NAME);
+        $this->expectException('InvalidArgumentException');
         new Annotation1($jsonValue);
     }
 

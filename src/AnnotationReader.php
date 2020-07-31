@@ -16,6 +16,8 @@ class AnnotationReader
     const CLASS_NAME = __CLASS__;
 
     /**
+     * PropertyName => Annotations[]
+     *
      * @var AbstractAnnotation[][]
      */
     private $propertyAnnotationsCache = array();
@@ -31,7 +33,9 @@ class AnnotationReader
         if (isset($this->propertyAnnotationsCache[$className])) {
             return $this->propertyAnnotationsCache[$className];
         }
+
         $fileParser = new FileParser($reflectionClass);
+        // $fileParser->get
         $propertyAnnotations = array();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $propertyName = $reflectionProperty->getName();
@@ -43,6 +47,7 @@ class AnnotationReader
             $annotationData = $fileParser->getAnnotationDataFromDocComment($docComment);
             $propertyAnnotations[$propertyName] = AnnotationFactory::batchCreate($annotationData);
         }
+
         $this->propertyAnnotationsCache = $propertyAnnotations;
         return $propertyAnnotations;
     }
