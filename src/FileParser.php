@@ -102,6 +102,7 @@ class FileParser
         if ($fileContent === null) {
             throw new \LogicException('preg_replace() failed.');
         }
+
         $tokens = token_get_all($fileContent);
         foreach ($tokens as $token) {
             if (!isset($token[1])) {
@@ -129,6 +130,7 @@ class FileParser
                 $currentUseStatement = '';
                 $currentAlias = null;
             } elseif ($token[1] === 'class') {
+                // TODO: Parse the whole file keep track of { }, have a nestedDepth
                 break;
             }
         }
