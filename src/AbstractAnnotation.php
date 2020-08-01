@@ -22,16 +22,32 @@ abstract class AbstractAnnotation
 
     /**
      * AbstractAnnotation constructor.
-     * @param string $value
+     * @param string $jsonValue
      */
-    final public function __construct($value)
+    final public function __construct($jsonValue)
     {
-        $this->value = json_decode($value);
+        $this->value = json_decode($jsonValue);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException("Invalid JSON in annotation: $value");
+            throw new \InvalidArgumentException("Invalid JSON in annotation: $jsonValue");
         }
-        if (!$this->validateValue()) {
-            throw new \InvalidArgumentException('Annotation has invalid value.');
+        if (is_object($this->value)) {
+            $this->mapObjectValuesToProperties();
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function mapObjectValuesToProperties()
+    {
+        foreach ($this->value as $propertyName => $propertyValue) {
+            try {
+                $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+                $reflectionProperty->setAccessible(true);
+                $reflectionProperty->setValue($this, $propertyValue);
+            } catch (\ReflectionException $e) {
+                throw new \InvalidArgumentException("Annotation does not have property: $propertyName", 0, $e);
+            }
         }
     }
 
@@ -42,9 +58,4 @@ abstract class AbstractAnnotation
     {
         return $this->value;
     }
-
-    /**
-     * @return bool
-     */
-    abstract public function validateValue();
 }

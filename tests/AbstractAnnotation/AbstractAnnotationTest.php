@@ -8,7 +8,7 @@
 namespace JWorman\AnnotationReader\Tests\AbstractAnnotation;
 
 use JWorman\AnnotationReader\AbstractAnnotation;
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\AbstractAnnotation\Annotations\TestConstructAnnotation;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,57 +18,42 @@ use PHPUnit\Framework\TestCase;
 class AbstractAnnotationTest extends TestCase
 {
     /**
-     * @covers       \JWorman\AnnotationReader\AbstractAnnotation::__construct
-     * @dataProvider provideDataForTestConstruct
-     * @param string $jsonValue
-     * @param mixed $expectedValue
+     * @covers \JWorman\AnnotationReader\AbstractAnnotation::__construct
      */
-    public function testConstruct($jsonValue, $expectedValue)
+    public function testConstruct()
     {
-        $abstractAnnotation = new Annotation1($jsonValue);
-
-        $this->assertEquals($expectedValue, $abstractAnnotation->getValue());
-    }
-
-    /**
-     * @return array
-     */
-    public function provideDataForTestConstruct()
-    {
-        return array(
-            array('null', null),
-            array('false', false),
-            array('true', true),
-            array('"fizzbuzz"', 'fizzbuzz'),
-            array('[]', array()),
-            array('{}', new \stdClass()),
-            array(
-                '[null, false, true, "fizzbuzz", [], {}]',
-                array(null, false, true, "fizzbuzz", array(), new \stdClass())
-            )
+        $annotation = new TestConstructAnnotation('[null, false, true, 42, 3.14, "fizzbuzz", [], {}]');
+        $this->assertEquals(
+            array(null, false, true, 42, 3.14, "fizzbuzz", array(), new \stdClass()),
+            $annotation->getValue()
         );
     }
 
     /**
-     * @covers       \JWorman\AnnotationReader\AbstractAnnotation::__construct
-     * @dataProvider provideDataForTestConstructException
-     * @param $jsonValue
+     * @covers \JWorman\AnnotationReader\AbstractAnnotation::__construct
      */
-    public function testConstructException($jsonValue)
+    public function testConstructInvalidJson()
     {
         $this->expectException('InvalidArgumentException');
-        new Annotation1($jsonValue);
+        new TestConstructAnnotation('invalid json');
     }
 
     /**
-     * @return array
+     * @covers \JWorman\AnnotationReader\AbstractAnnotation::mapObjectValuesToProperties
      */
-    public function provideDataForTestConstructException()
+    public function testMapObjectValuesToProperties()
     {
-        return array(
-            array('nulls'),
-            array('falses'),
-            array('["boomba"'),
-        );
+        $annotation = new TestConstructAnnotation('{"property1": "fizzbuzz", "property2": 42}');
+        $this->assertEquals('fizzbuzz', $annotation->getProperty1());
+        $this->assertEquals(42, $annotation->getProperty2());
+    }
+
+    /**
+     * @covers \JWorman\AnnotationReader\AbstractAnnotation::mapObjectValuesToProperties
+     */
+    public function testMapObjectValuesToPropertiesPropertyDoesNotExist()
+    {
+        $this->expectException('InvalidArgumentException');
+        new TestConstructAnnotation('{"propertyDoesNotExist": "fizzbuzz", "property2": 42}');
     }
 }

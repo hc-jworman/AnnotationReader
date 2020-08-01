@@ -92,4 +92,13 @@ class AnnotationReaderTest extends TestCase
             )
         );
     }
+
+//    public function testBlasssss()
+//    {
+//        $reflectionProperty = new \ReflectionProperty(Entity1::CLASS_NAME, 'property1');
+//        $annotationReader = new AnnotationReader();
+//
+//        $annotation1 = $annotationReader->getPropertyAnnotation($reflectionProperty, Annotation1::CLASS_NAME . '5');
+//
+//    }
 }

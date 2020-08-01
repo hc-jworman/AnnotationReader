@@ -16,15 +16,15 @@ class AnnotationReader
     const CLASS_NAME = __CLASS__;
 
     /**
-     * PropertyName => Annotations[]
+     * ClassName => [PropertyName => Annotations[]]
      *
-     * @var AbstractAnnotation[][]
+     * @var array<string, array<string, array<AbstractAnnotation>>>
      */
     private $propertyAnnotationsCache = array();
 
     /**
      * @param \ReflectionProperty $reflectionProperty
-     * @return AbstractAnnotation[]
+     * @return AbstractAnnotation[][]
      */
     public function getPropertyAnnotations(\ReflectionProperty $reflectionProperty)
     {
@@ -35,7 +35,6 @@ class AnnotationReader
         }
 
         $fileParser = new FileParser($reflectionClass);
-        // $fileParser->get
         $propertyAnnotations = array();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $propertyName = $reflectionProperty->getName();
@@ -48,14 +47,15 @@ class AnnotationReader
             $propertyAnnotations[$propertyName] = AnnotationFactory::batchCreate($annotationData);
         }
 
-        $this->propertyAnnotationsCache = $propertyAnnotations;
+        $this->propertyAnnotationsCache[$className] = $propertyAnnotations;
         return $propertyAnnotations;
     }
 
     /**
      * @param \ReflectionProperty $reflectionProperty
      * @param string $annotationName
-     * @return AbstractAnnotation|null
+     * @return AbstractAnnotation
+     * @throws PropertyAnnotationNotFound
      */
     public function getPropertyAnnotation(\ReflectionProperty $reflectionProperty, $annotationName)
     {
@@ -65,6 +65,6 @@ class AnnotationReader
                 return $annotation;
             }
         }
-        return null;
+        throw new PropertyAnnotationNotFound($reflectionProperty, $annotationName);
     }
 }

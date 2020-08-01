@@ -64,7 +64,12 @@ class FileParser
             $name = implode('\\', $nameParts);
         }
         $jsonValues = $matches[2];
-        return array_combine($names, $jsonValues);
+
+        $annotationData = array_combine($names, $jsonValues);
+        if ($annotationData === false) {
+            throw new \LogicException('array_combine() failed. The number of elements for each array isn\'t equal or the arrays are empty');
+        }
+        return $annotationData;
     }
 
     /**
@@ -85,8 +90,18 @@ class FileParser
         $inUseStatement = false;
         $inAliasStatement = false;
 
-        $fileContent = file_get_contents($this->reflectionClass->getFileName());
+        $fileName = $this->reflectionClass->getFileName();
+        if ($fileName === false) {
+            throw new \InvalidArgumentException('Cannot get file name of an internal class.');
+        }
+        $fileContent = file_get_contents($fileName);
+        if ($fileContent === false) {
+            throw new \RuntimeException('Could not get contents from file, "' . $fileName . '".');
+        }
         $fileContent = preg_replace('/\s+/', ' ', $fileContent);
+        if ($fileContent === null) {
+            throw new \LogicException('preg_replace() failed.');
+        }
         $tokens = token_get_all($fileContent);
         foreach ($tokens as $token) {
             if (!isset($token[1])) {

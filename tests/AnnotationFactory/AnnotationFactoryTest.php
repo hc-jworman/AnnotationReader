@@ -5,7 +5,7 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit;
+namespace JWorman\AnnotationReader\Tests\AnnotationFactory;
 
 use JWorman\AnnotationReader\AnnotationFactory;
 use JWorman\AnnotationReader\AbstractAnnotation;
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class AnnotationFactoryTest
- * @package JWorman\AnnotationReader\Tests\Unit
+ * @package JWorman\AnnotationReader\Tests\AnnotationFactory
  */
 class AnnotationFactoryTest extends TestCase
 {
@@ -31,7 +31,8 @@ class AnnotationFactoryTest extends TestCase
         $annotation = AnnotationFactory::create($annotationName, 'true');
 
         if ($succeeds) {
-            $this->assertTrue($annotation instanceof AbstractAnnotation);
+            $this->assertInstanceOf($annotationName, $annotation);
+            $this->assertInstanceOf(AbstractAnnotation::CLASS_NAME, $annotation);
             $this->assertTrue($annotation->getValue());
         } else {
             $this->assertNull($annotation);
