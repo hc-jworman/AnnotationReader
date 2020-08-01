@@ -60,5 +60,4 @@ class PropertyAnnotationNotFound extends \Exception
     {
         return $this->annotationName;
     }
-
 }
