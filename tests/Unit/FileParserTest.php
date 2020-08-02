@@ -49,7 +49,7 @@ class FileParserTest extends TestCase
 
         $expectedAnnotationData = array(
             Annotation1::CLASS_NAME => '"fizzbuzz"',
-            'JWorman\AnnotationReader\Tests\Unit\Entities\FakeAnnotation' => ''
+//            'JWorman\AnnotationReader\Tests\Unit\Entities\FakeAnnotation' => ''
         );
         $this->assertEquals($expectedAnnotationData, $annotationData);
     }

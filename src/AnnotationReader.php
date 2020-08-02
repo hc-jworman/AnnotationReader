@@ -7,6 +7,8 @@
 
 namespace JWorman\AnnotationReader;
 
+use JWorman\AnnotationReader\Exceptions\PropertyAnnotationNotFound;
+
 /**
  * Class AnnotationReader
  * @package JWorman\AnnotationReader

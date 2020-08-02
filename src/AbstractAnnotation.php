@@ -7,6 +7,8 @@
 
 namespace JWorman\AnnotationReader;
 
+use JWorman\AnnotationReader\Exceptions\PropertyDoesNotExist;
+
 /**
  * Class AbstractAnnotation
  * @package JWorman\AnnotationReader\AnnotationReader
@@ -46,7 +48,7 @@ abstract class AbstractAnnotation
                 $reflectionProperty->setAccessible(true);
                 $reflectionProperty->setValue($this, $propertyValue);
             } catch (\ReflectionException $e) {
-                throw new \InvalidArgumentException("Annotation does not have property: $propertyName", 0, $e);
+                throw new PropertyDoesNotExist(__CLASS__, $propertyName, 0, $e);
             }
         }
     }

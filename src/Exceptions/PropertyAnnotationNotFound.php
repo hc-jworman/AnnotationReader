@@ -5,11 +5,11 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader;
+namespace JWorman\AnnotationReader\Exceptions;
 
 /**
  * Class AnnotationNotFound
- * @package JWorman\AnnotationReader
+ * @package JWorman\AnnotationReader\Exceptions
  */
 class PropertyAnnotationNotFound extends \Exception
 {

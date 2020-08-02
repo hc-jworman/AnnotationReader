@@ -47,27 +47,25 @@ class FileParser
          * https://regex101.com/r/tW6pI4/1
          */
         preg_match_all('/@([\\\\\w]+)\((?:|(.*?[]"}]))\)/', $docComment, $matches);
-        $names = $matches[1];
+
+        $annotationData = array();
         // Replacing aliases with their FQN
-        foreach ($names as &$name) {
+        foreach ($matches[1] as $index => $name) {
             $nameParts = explode('\\', $name);
-            if (isset($classImports[$nameParts[0]])) {
-                // Has an import statement:
+
+            if (isset($classImports[$nameParts[0]])) { // Has an import statement:
                 $nameParts[0] = $classImports[$nameParts[0]];
-            } elseif (class_exists($name)) {
-                // Is a FQN
+            } elseif (class_exists($name)) { // Is a FQN
                 continue;
-            } else {
-                // In the same namespace or invalid:
+            } else { // In the same namespace or invalid:
                 $nameParts[0] = $classNamespace . '\\' . $nameParts[0];
             }
-            $name = implode('\\', $nameParts);
-        }
-        $jsonValues = $matches[2];
 
-        $annotationData = array_combine($names, $jsonValues);
-        if ($annotationData === false) {
-            throw new \LogicException('array_combine() failed. The number of elements for each array isn\'t equal or the arrays are empty');
+            $name = implode('\\', $nameParts);
+
+            if (is_subclass_of($name, AbstractAnnotation::CLASS_NAME)) {
+                $annotationData[$name] = $matches[2][$index];
+            }
         }
         return $annotationData;
     }

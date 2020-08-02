@@ -7,6 +7,8 @@
 
 namespace JWorman\AnnotationReader;
 
+use JWorman\AnnotationReader\Exceptions\NotAnAnnotation;
+
 /**
  * Class AnnotationFactory
  * @package JWorman\AnnotationReader
@@ -14,7 +16,7 @@ namespace JWorman\AnnotationReader;
 class AnnotationFactory
 {
     /**
-     * @param string[] $annotationData annotationName => jsonValue
+     * @param array<string, string> $annotationData annotationName => jsonValue
      * @return AbstractAnnotation[]
      */
     public static function batchCreate(array $annotationData)
@@ -22,9 +24,7 @@ class AnnotationFactory
         $annotations = array();
         foreach ($annotationData as $annotationName => $jsonValue) {
             $annotation = self::create($annotationName, $jsonValue);
-            if ($annotation !== null) {
-                $annotations[] = $annotation;
-            }
+            $annotations[] = $annotation;
         }
         return $annotations;
     }
@@ -32,17 +32,20 @@ class AnnotationFactory
     /**
      * @param string $annotationName
      * @param string $jsonValue
-     * @return AbstractAnnotation|null
+     * @return AbstractAnnotation
      */
     public static function create($annotationName, $jsonValue)
     {
-        if (class_exists($annotationName)) {
-            // TODO: Catch new statement invalid argument exception and give better debugging message.
-            $annotation = new $annotationName($jsonValue);
-            if ($annotation instanceof AbstractAnnotation) {
-                return $annotation;
-            }
+        try {
+            $reflectionClass = new \ReflectionClass($annotationName);
+        } catch (\ReflectionException $e) {
+            throw new \InvalidArgumentException($e->getMessage(), 0, $e);
         }
-        return null;
+        if (!$reflectionClass->isSubclassOf(AbstractAnnotation::CLASS_NAME)) {
+            throw new NotAnAnnotation($annotationName);
+        }
+        /** @var AbstractAnnotation $annotation */
+        $annotation = $reflectionClass->newInstance($jsonValue);
+        return $annotation;
     }
 }

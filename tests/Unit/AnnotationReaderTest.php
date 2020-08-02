@@ -38,8 +38,6 @@ class AnnotationReaderTest extends TestCase
     }
 
     /**
-     *
-     *
      * @dataProvider provideForTestAnnotationRegex
      * @param string[] $expectedNames
      * @param string[] $expectedValues
