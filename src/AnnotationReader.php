@@ -46,7 +46,11 @@ class AnnotationReader
                 continue;
             }
             $annotationData = $fileParser->getAnnotationDataFromDocComment($docComment);
-            $propertyAnnotations[$propertyName] = AnnotationFactory::batchCreate($annotationData);
+            try {
+                $propertyAnnotations[$propertyName] = AnnotationFactory::batchCreate($annotationData);
+            } catch (\ReflectionException $e) {
+                throw new \LogicException($e->getMessage(), 0, $e);
+            }
         }
 
         $this->propertyAnnotationsCache[$className] = $propertyAnnotations;

@@ -18,6 +18,7 @@ class AnnotationFactory
     /**
      * @param array<string, string> $annotationData annotationName => jsonValue
      * @return AbstractAnnotation[]
+     * @throws \ReflectionException if $annotationName does not exist
      */
     public static function batchCreate(array $annotationData)
     {
@@ -33,14 +34,11 @@ class AnnotationFactory
      * @param string $annotationName
      * @param string $jsonValue
      * @return AbstractAnnotation
+     * @throws \ReflectionException if $annotationName does not exist
      */
     public static function create($annotationName, $jsonValue)
     {
-        try {
-            $reflectionClass = new \ReflectionClass($annotationName);
-        } catch (\ReflectionException $e) {
-            throw new \InvalidArgumentException($e->getMessage(), 0, $e);
-        }
+        $reflectionClass = new \ReflectionClass($annotationName);
         if (!$reflectionClass->isSubclassOf(AbstractAnnotation::CLASS_NAME)) {
             throw new NotAnAnnotation($annotationName);
         }

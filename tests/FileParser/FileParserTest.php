@@ -5,7 +5,7 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit;
+namespace JWorman\AnnotationReader\Tests\FileParser;
 
 use JWorman\AnnotationReader\FileParser;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;

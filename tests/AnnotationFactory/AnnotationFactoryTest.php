@@ -9,9 +9,13 @@ namespace JWorman\AnnotationReader\Tests\AnnotationFactory;
 
 use JWorman\AnnotationReader\AnnotationFactory;
 use JWorman\AnnotationReader\AbstractAnnotation;
+use JWorman\AnnotationReader\Exceptions\NotAnAnnotation;
+use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\ClassIsNotAnAnnotation;
+use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\TestBatchCreateAnnotation1;
+use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\TestBatchCreateAnnotation2;
+use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\TestCreateAnnotation;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
 use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation2;
-use JWorman\AnnotationReader\Tests\Unit\Entities\Entity1;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,81 +25,56 @@ use PHPUnit\Framework\TestCase;
 class AnnotationFactoryTest extends TestCase
 {
     /**
-     * @covers       \JWorman\AnnotationReader\AnnotationFactory::create
-     * @dataProvider provideForTestCreate
-     * @param string $annotationName
-     * @param bool $succeeds
+     * @covers \JWorman\AnnotationReader\AnnotationFactory::create
+     * @throws \ReflectionException
      */
-    public function testCreate($annotationName, $succeeds)
+    public function testCreate()
     {
-        $annotation = AnnotationFactory::create($annotationName, 'true');
+        $annotation = AnnotationFactory::create(TestCreateAnnotation::CLASS_NAME, 'true');
 
-        if ($succeeds) {
-            $this->assertTrue($annotation instanceof $annotationName);
-            $this->assertTrue($annotation instanceof AbstractAnnotation);
-            $this->assertTrue($annotation->getValue());
-        } else {
-            $this->assertNull($annotation);
-        }
+        $this->assertInstanceOf(TestCreateAnnotation::CLASS_NAME, $annotation);
+        $this->assertInstanceOf(AbstractAnnotation::CLASS_NAME, $annotation);
+        $this->assertTrue($annotation->getValue());
     }
 
     /**
-     * @return array[]
+     * @covers \JWorman\AnnotationReader\AnnotationFactory::create
+     * @throws \ReflectionException
      */
-    public function provideForTestCreate()
+    public function testCreateClassDoesNotExist()
     {
-        return array(
-            array(Annotation1::CLASS_NAME, true),
-//            array('DoesNotExist', false),
+        $this->expectException('\ReflectionException');
+
+        AnnotationFactory::create('ClassDoesNotExist', 'true');
+    }
+
+    /**
+     * @covers \JWorman\AnnotationReader\AnnotationFactory::create
+     * @throws \ReflectionException
+     */
+    public function testCreateClassIsNotAnAnnotation()
+    {
+        $this->expectException(NotAnAnnotation::CLASS_NAME);
+
+        AnnotationFactory::create(ClassIsNotAnAnnotation::CLASS_NAME, 'true');
+    }
+
+    /**
+     * @covers \JWorman\AnnotationReader\AnnotationFactory::batchCreate
+     * @throws \ReflectionException
+     */
+    public function testBatchCreate()
+    {
+        $annotationData = array(
+            TestBatchCreateAnnotation1::CLASS_NAME => 'true',
+            TestBatchCreateAnnotation2::CLASS_NAME => 'true'
         );
-    }
-
-    /**
-     * @covers       \JWorman\AnnotationReader\AnnotationFactory::batchCreate
-     * @dataProvider provideForTestBatchCreate
-     * @param array $annotationData
-     * @param int $expectedCount
-     */
-    public function testBatchCreate(array $annotationData, $expectedCount)
-    {
         $annotations = AnnotationFactory::batchCreate($annotationData);
 
-        $this->assertCount($expectedCount, $annotations);
+        $this->assertCount(2, $annotations);
         foreach($annotations as $annotation) {
             $this->assertTrue($annotation instanceof AbstractAnnotation);
             $this->assertTrue($annotation->getValue());
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function provideForTestBatchCreate()
-    {
-        return array(
-            // Test Case 1
-            array(
-                array(Annotation1::CLASS_NAME => 'true', Annotation2::CLASS_NAME => 'true'),
-                2
-            ),
-            // Test Case 2
-//            array(
-//                array(
-//                    Annotation1::CLASS_NAME => 'true',
-//                    null,
-//                    false,
-//                    true,
-//                    'DoesNotExist' => 'true',
-//                    Entity1::CLASS_NAME => 'true',
-//                    new Entity1()
-//                ),
-//                1
-//            ),
-            // Test Case 2
-//            array(
-//                array(),
-//                0
-//            ),
-        );
     }
 }
