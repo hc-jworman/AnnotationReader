@@ -177,14 +177,4 @@ class FileParser
         $this->classImports = $classImports;
         return $classImports;
     }
-
-    private function inUseStatementLogic()
-    {
-
-    }
-
-    private function UseStatementLogic()
-    {
-
-    }
 }
