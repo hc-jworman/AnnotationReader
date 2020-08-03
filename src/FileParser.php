@@ -83,7 +83,8 @@ class FileParser
         $classImports = array();
 
         $currentUseStatement = '';
-        $currentAlias = null;
+        $currentAlias = '';
+        $currentGroupStatement = '';
         $inUseStatement = false;
         $inAliasStatement = false;
         $inGroupStatement = false;
@@ -134,41 +135,40 @@ class FileParser
                         $inGroupStatement = false;
                         break;
                 }
-            } else {
+            } elseif ($inUseStatement) {
                 switch ($token) {
                     case ';':
-                        if ($inUseStatement) {
-                            if ($inGroupStatement) {
-                                $currentUseStatement = $currentGroupStatement . $currentUseStatement;
-                            }
-                            $classImports[$currentAlias] = $currentUseStatement;
+                        $classImports[$currentAlias]
+                            = ($inGroupStatement ? $currentGroupStatement : '') . $currentUseStatement;
 
-                            $inUseStatement = false;
-                            $currentUseStatement = '';
-                            $inAliasStatement = false;
-                            $currentAlias = null;
-                            $inGroupStatement = false;
-                        }
+                        $inUseStatement = false;
+                        $currentUseStatement = '';
+                        $inAliasStatement = false;
+                        $currentAlias = null;
+                        $inGroupStatement = false;
                         break;
                     case ',':
-                        if ($inUseStatement) {
-                            if ($inGroupStatement) {
-                                $currentUseStatement = $currentGroupStatement . $currentUseStatement;
-                            }
-                            $classImports[$currentAlias] = $currentUseStatement;
+                        $classImports[$currentAlias]
+                            = ($inGroupStatement ? $currentGroupStatement : '') . $currentUseStatement;
 
-                            $currentUseStatement = '';
-                            $inAliasStatement = false;
-                            $currentAlias = null;
-                        }
+                        $currentUseStatement = '';
+                        $inAliasStatement = false;
+                        $currentAlias = null;
                         break;
                     case '{':
                         $depth++;
-                        if ($inUseStatement) {
-                            $inGroupStatement = true;
-                            $currentGroupStatement = $currentUseStatement;
-                            $currentUseStatement = '';
-                        }
+                        $inGroupStatement = true;
+                        $currentGroupStatement = $currentUseStatement;
+                        $currentUseStatement = '';
+                        break;
+                    case '}':
+                        $depth--;
+                        break;
+                }
+            } else {
+                switch ($token) {
+                    case '{':
+                        $depth++;
                         break;
                     case '}':
                         $depth--;
