@@ -71,7 +71,6 @@ class FileParser
     }
 
     /**
-     * @todo Does not support combined use statements.
      * @return string[] Alias => FQN
      */
     private function getClassImports()
@@ -102,38 +101,36 @@ class FileParser
         $tokens = token_get_all($fileContent);
         foreach ($tokens as $token) {
             if (is_array($token)) {
-                switch ($token[0]) {
-                    case T_USE:
-                        if ($depth === 0) {
-                            $inUseStatement = true;
-                        }
-                        break;
-                    case T_AS:
-                        if ($inUseStatement) {
+                if ($inUseStatement) {
+                    switch ($token[0]) {
+                        case T_AS:
                             $inAliasStatement = true;
-                        }
-                        break;
-                    case T_NS_SEPARATOR:
-                        if ($inUseStatement) {
-                            $currentUseStatement .= $token[1];
-                        }
-                        break;
-                    case T_STRING:
-                        if ($inAliasStatement) {
+                            break;
+                        case T_STRING:
                             $currentAlias = $token[1];
-                        } elseif ($inUseStatement) {
-                            $currentUseStatement .= $token[1];
-                            $currentAlias = $token[1];
-                        }
-                        break;
-                    case T_FUNCTION:
-                    case T_CONST:
-                        $inUseStatement = false;
-                        $currentUseStatement = '';
-                        $inAliasStatement = false;
-                        $currentAlias = null;
-                        $inGroupStatement = false;
-                        break;
+                            // fallthrough
+                        case T_NS_SEPARATOR:
+                            if (!$inAliasStatement) {
+                                $currentUseStatement .= $token[1];
+                            }
+                            break;
+                        case T_FUNCTION:
+                        case T_CONST:
+                            $inUseStatement = false;
+                            $currentUseStatement = '';
+                            $inAliasStatement = false;
+                            $currentAlias = null;
+                            $inGroupStatement = false;
+                            break;
+                    }
+                } else {
+                    switch ($token[0]) {
+                        case T_USE:
+                            if ($depth === 0) {
+                                $inUseStatement = true;
+                            }
+                            break;
+                    }
                 }
             } elseif ($inUseStatement) {
                 switch ($token) {
