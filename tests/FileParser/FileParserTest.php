@@ -24,15 +24,23 @@ class FileParserTest extends TestCase
      */
     public function testGetImportAliases()
     {
+        $reflectionClass = new \ReflectionClass(GetImportsTest::CLASS_NAME);
+        $fileParser = new FileParser($reflectionClass);
         $reflectionMethod = new \ReflectionMethod(FileParser::CLASS_NAME, 'getClassImports');
         $reflectionMethod->setAccessible(true);
-        $classImports = $reflectionMethod->invoke(
-            new FileParser(new \ReflectionClass(GetImportsTest::CLASS_NAME))
-        );
+        $classImports = $reflectionMethod->invoke($fileParser);
 
         $expectedClassImports = array(
             'Name' => 'A\Fully\Qualified\Name',
-            'ThisIsAnAlias' => 'Has\An\Alias'
+            'ThisIsAnAlias' => 'Has\An\Alias',
+            'First' => 'First\Multiple',
+            'Multiple' => 'Second\Multiple',
+            'Third' => 'Third',
+            'Fourth' => 'Fourth\Multiple',
+            'ClassA' => 'Group\Names\ClassA',
+            'B' => 'Group\Names\ClassB',
+            'C' => 'Group\Names\ClassC',
+            'Bottom' => 'At\The\Bottom'
         );
         $this->assertEquals($expectedClassImports, $classImports);
     }

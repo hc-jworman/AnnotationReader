@@ -84,9 +84,10 @@ class FileParser
 
         $currentUseStatement = '';
         $currentAlias = null;
-
         $inUseStatement = false;
         $inAliasStatement = false;
+        $inGroupStatement = false;
+        $depth = 0;
 
         $fileName = $this->reflectionClass->getFileName();
         if ($fileName === false) {
@@ -96,40 +97,83 @@ class FileParser
         if ($fileContent === false) {
             throw new \RuntimeException('Could not get contents from file, "' . $fileName . '".');
         }
-        $fileContent = preg_replace('/\s+/', ' ', $fileContent);
-        if ($fileContent === null) {
-            throw new \LogicException('preg_replace() failed.');
-        }
 
         $tokens = token_get_all($fileContent);
         foreach ($tokens as $token) {
-            if (!isset($token[1])) {
-                if ($inUseStatement && $token === ';') {
-                    $inUseStatement = false;
-                    $inAliasStatement = false;
-                    if ($currentAlias === null) {
-                        $namespaceParts = explode('\\', $currentUseStatement);
-                        $currentAlias = $namespaceParts[count($namespaceParts) - 1];
-                    }
-                    $classImports[$currentAlias] = $currentUseStatement;
+            if (is_array($token)) {
+                switch ($token[0]) {
+                    case T_USE:
+                        if ($depth === 0) {
+                            $inUseStatement = true;
+                        }
+                        break;
+                    case T_AS:
+                        if ($inUseStatement) {
+                            $inAliasStatement = true;
+                        }
+                        break;
+                    case T_NS_SEPARATOR:
+                        if ($inUseStatement) {
+                            $currentUseStatement .= $token[1];
+                        }
+                        break;
+                    case T_STRING:
+                        if ($inAliasStatement) {
+                            $currentAlias = $token[1];
+                        } elseif ($inUseStatement) {
+                            $currentUseStatement .= $token[1];
+                            $currentAlias = $token[1];
+                        }
+                        break;
+                    case T_FUNCTION:
+                    case T_CONST:
+                        $inUseStatement = false;
+                        $currentUseStatement = '';
+                        $inAliasStatement = false;
+                        $currentAlias = null;
+                        $inGroupStatement = false;
+                        break;
                 }
-            } elseif ($inUseStatement) {
-                if ($token[1] === 'as') {
-                    $inAliasStatement = true;
-                } elseif ($token[1] !== ' ') {
-                    if ($inAliasStatement) {
-                        $currentAlias = $token[1];
-                    } else {
-                        $currentUseStatement .= $token[1];
-                    }
+            } else {
+                switch ($token) {
+                    case ';':
+                        if ($inUseStatement) {
+                            if ($inGroupStatement) {
+                                $currentUseStatement = $currentGroupStatement . $currentUseStatement;
+                            }
+                            $classImports[$currentAlias] = $currentUseStatement;
+
+                            $inUseStatement = false;
+                            $currentUseStatement = '';
+                            $inAliasStatement = false;
+                            $currentAlias = null;
+                            $inGroupStatement = false;
+                        }
+                        break;
+                    case ',':
+                        if ($inUseStatement) {
+                            if ($inGroupStatement) {
+                                $currentUseStatement = $currentGroupStatement . $currentUseStatement;
+                            }
+                            $classImports[$currentAlias] = $currentUseStatement;
+
+                            $currentUseStatement = '';
+                            $inAliasStatement = false;
+                            $currentAlias = null;
+                        }
+                        break;
+                    case '{':
+                        $depth++;
+                        if ($inUseStatement) {
+                            $inGroupStatement = true;
+                            $currentGroupStatement = $currentUseStatement;
+                            $currentUseStatement = '';
+                        }
+                        break;
+                    case '}':
+                        $depth--;
+                        break;
                 }
-            } elseif ($token[1] === 'use') {
-                $inUseStatement = true;
-                $currentUseStatement = '';
-                $currentAlias = null;
-            } elseif ($token[1] === 'class') {
-                // TODO: Parse the whole file keep track of { }, have a nestedDepth
-                break;
             }
         }
 
