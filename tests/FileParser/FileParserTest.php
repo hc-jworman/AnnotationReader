@@ -43,7 +43,6 @@ class FileParserTest extends TestCase
             'Bottom' => 'At\The\Bottom'
         );
         $this->assertEquals($expectedClassImports, $classImports);
-        // TODO: assert cache variable is set
     }
 
     /**
