@@ -8,16 +8,17 @@
 namespace JWorman\AnnotationReader\Tests\FileParser\Entities;
 
 use A\Fully\Qualified\Name;
-use At\The\Bottom;
-use Group\Names\{ClassA};
-use Second\Multiple;
-use Third;
+use Has\An\Alias as ThisIsAnAlias;
+use First\Multiple as First, Second\Multiple;
+use Third, Fourth\Multiple as Fourth;
+use Group\Names\{ClassA, ClassB as B, ClassC as C};
 
 use function blah;
-
 use const blah2;
 
-trait ThisIsATrait {}
+trait ThisIsATrait
+{
+}
 
 /**
  * Class GetImportsTest
@@ -29,3 +30,5 @@ class GetImportsTest
 
     const CLASS_NAME = __CLASS__;
 }
+
+use At\The\Bottom;
