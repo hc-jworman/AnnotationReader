@@ -5,7 +5,7 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit\Annotations;
+namespace JWorman\AnnotationReader\Tests\AnnotationReader\Annotations;
 
 use JWorman\AnnotationReader\AbstractAnnotation;
 

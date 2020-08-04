@@ -8,9 +8,10 @@
 namespace JWorman\AnnotationReader\Tests\FileParser;
 
 use JWorman\AnnotationReader\FileParser;
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
-use JWorman\AnnotationReader\Tests\Unit\Entities\GetAnnotationDataFromDocCommentTest;
-use JWorman\AnnotationReader\Tests\Unit\Entities\GetImportsTest;
+use JWorman\AnnotationReader\Tests\FileParser\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\FileParser\Annotations\Annotation2;
+use JWorman\AnnotationReader\Tests\FileParser\Entities\GetAnnotationDataFromDocCommentTest;
+use JWorman\AnnotationReader\Tests\FileParser\Entities\GetImportsTest;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -57,7 +58,7 @@ class FileParserTest extends TestCase
 
         $expectedAnnotationData = array(
             Annotation1::CLASS_NAME => '"fizzbuzz"',
-//            'JWorman\AnnotationReader\Tests\Unit\Entities\FakeAnnotation' => ''
+            Annotation2::CLASS_NAME => '[null, true, false]'
         );
         $this->assertEquals($expectedAnnotationData, $annotationData);
     }

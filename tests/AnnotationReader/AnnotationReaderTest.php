@@ -5,11 +5,11 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit;
+namespace JWorman\AnnotationReader\Tests\AnnotationReader;
 
 use JWorman\AnnotationReader\AnnotationReader;
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
-use JWorman\AnnotationReader\Tests\Unit\Entities\Entity1;
+use JWorman\AnnotationReader\Tests\AnnotationReader\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\AnnotationReader\Entities\Entity1;
 use PHPUnit\Framework\TestCase;
 
 class AnnotationReaderTest extends TestCase

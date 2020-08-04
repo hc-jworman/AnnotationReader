@@ -5,10 +5,10 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit\Entities;
+namespace JWorman\AnnotationReader\Tests\AnnotationReader\Entities;
 
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
-use JWorman\AnnotationReader\Tests\Unit as Blah;
+use JWorman\AnnotationReader\Tests\AnnotationReader as Blah;
+use JWorman\AnnotationReader\Tests\AnnotationReader\Annotations\Annotation1;
 
 /**
  * Class Entity1

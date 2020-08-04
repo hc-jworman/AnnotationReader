@@ -5,9 +5,10 @@
  * @author Jack Worman
  */
 
-namespace JWorman\AnnotationReader\Tests\Unit\Entities;
+namespace JWorman\AnnotationReader\Tests\FileParser\Entities;
 
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\FileParser\Annotations\Annotation1;
+use JWorman\AnnotationReader\Tests\FileParser\Annotations\Annotation2;
 
 /**
  * Class GetAnnotationDataFromDocCommentTest
@@ -21,6 +22,7 @@ class GetAnnotationDataFromDocCommentTest
      * @var string
      * @Annotation1("fizzbuzz")
      * @FakeAnnotation()
+     * @Annotation2([null, true, false])
      */
     private $testProperty;
 }

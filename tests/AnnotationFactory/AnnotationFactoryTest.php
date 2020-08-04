@@ -7,15 +7,13 @@
 
 namespace JWorman\AnnotationReader\Tests\AnnotationFactory;
 
-use JWorman\AnnotationReader\AnnotationFactory;
 use JWorman\AnnotationReader\AbstractAnnotation;
+use JWorman\AnnotationReader\AnnotationFactory;
 use JWorman\AnnotationReader\Exceptions\NotAnAnnotation;
 use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\ClassIsNotAnAnnotation;
 use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\TestBatchCreateAnnotation1;
 use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\TestBatchCreateAnnotation2;
 use JWorman\AnnotationReader\Tests\AnnotationFactory\Annotations\TestCreateAnnotation;
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation1;
-use JWorman\AnnotationReader\Tests\Unit\Annotations\Annotation2;
 use PHPUnit\Framework\TestCase;
 
 /**
