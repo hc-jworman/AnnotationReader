@@ -1,18 +1,9 @@
 <?php
 
-/**
- * NotAnAnnotation.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader\Exceptions;
 
 use JWorman\AnnotationReader\AbstractAnnotation;
 
-/**
- * Class NotAnAnnotation
- * @package JWorman\AnnotationReader\Exceptions
- */
 class NotAnAnnotation extends \InvalidArgumentException
 {
     const CLASS_NAME = __CLASS__;

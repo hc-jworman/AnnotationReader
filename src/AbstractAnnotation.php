@@ -1,18 +1,9 @@
 <?php
 
-/**
- * AbstractAnnotation.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader;
 
 use JWorman\AnnotationReader\Exceptions\PropertyDoesNotExist;
 
-/**
- * Class AbstractAnnotation
- * @package JWorman\AnnotationReader\AnnotationReader
- */
 abstract class AbstractAnnotation
 {
     const CLASS_NAME = __CLASS__;

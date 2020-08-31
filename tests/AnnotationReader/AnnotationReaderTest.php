@@ -1,10 +1,5 @@
 <?php
 
-/**
- * AnnotationReaderTest.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader\Tests\AnnotationReader;
 
 use JWorman\AnnotationReader\AnnotationReader;

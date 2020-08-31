@@ -1,16 +1,7 @@
 <?php
 
-/**
- * PropertyDoesNotExist.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader\Exceptions;
 
-/**
- * Class PropertyDoesNotExist
- * @package JWorman\AnnotationReader\Exceptions
- */
 class PropertyDoesNotExist extends \DomainException
 {
     const CLASS_NAME = __CLASS__;

@@ -1,18 +1,9 @@
 <?php
 
-/**
- * AnnotationFactory.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader;
 
 use JWorman\AnnotationReader\Exceptions\NotAnAnnotation;
 
-/**
- * Class AnnotationFactory
- * @package JWorman\AnnotationReader
- */
 class AnnotationFactory
 {
     /**

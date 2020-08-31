@@ -1,16 +1,7 @@
 <?php
 
-/**
- * PropertyAnnotationNotFound.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader\Exceptions;
 
-/**
- * Class AnnotationNotFound
- * @package JWorman\AnnotationReader\Exceptions
- */
 class PropertyAnnotationNotFound extends \Exception
 {
     /**

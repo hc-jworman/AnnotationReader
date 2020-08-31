@@ -1,16 +1,7 @@
 <?php
 
-/**
- * FileParser.php
- * @author Jack Worman
- */
-
 namespace JWorman\AnnotationReader;
 
-/**
- * Class FileParser
- * @package JWorman\AnnotationReader
- */
 class FileParser
 {
     const CLASS_NAME = __CLASS__;
